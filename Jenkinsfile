@@ -57,13 +57,16 @@ pipeline {
         always {
             junit 'reports/results.xml'
 
+            // 使用 qualityGates 定义质量门禁（推荐）
             recordIssues(
                 tools: [
                     pyLint(pattern: 'pylint-report.txt'),
                     flake8(pattern: 'flake8-report.txt')
                 ],
-                unhealthyTotal: 50,
-                failedTotal: 100
+                qualityGates: [
+                    [threshold: 50, type: 'TOTAL', criticality: 'UNSTABLE'],
+                    [threshold: 100, type: 'TOTAL', criticality: 'FAILURE']
+                ]
             )
 
             publishHTML(target: [
