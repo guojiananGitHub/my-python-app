@@ -71,6 +71,9 @@ pipeline {
             )
 
             publishHTML(target: [
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
                 reportDir: 'reports/html',
                 reportFiles: 'index.html',
                 reportName: 'Coverage Report'
