@@ -12,6 +12,7 @@ pipeline {
             steps {
                 sh '''
                     ${PIP} install -r requirements.txt
+                    ${PIP} install pytest pytest-cov
                 '''
             }
         }
@@ -45,6 +46,7 @@ pipeline {
         stage('Unit Test') {
             steps {
                 sh '''
+                    mkdir -p reports
                     ${PYTHON} -m pytest tests/ \
                       --junitxml=reports/results.xml \
                       --cov=. --cov-report=html:reports/html
@@ -55,9 +57,8 @@ pipeline {
 
     post {
         always {
-            junit 'reports/results.xml'
+            junit testResults: 'reports/results.xml', allowEmptyResults: true
 
-            // 使用 qualityGates 定义质量门禁（推荐）
             recordIssues(
                 tools: [
                     pyLint(pattern: 'pylint-report.txt'),
